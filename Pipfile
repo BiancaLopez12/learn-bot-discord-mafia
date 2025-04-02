@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+"discord.py" = "*"
+
+[dev-packages]
+watchdog = {extras = ["watchmedo"], version = "*"}
+
+[scripts]
+dev = 'python main_dev.py'
+start = 'python main.py'
+
+[requires]
+python_version = "3.11"
