@@ -7,11 +7,13 @@ name = "pypi"
 "discord.py" = "*"
 
 [dev-packages]
-watchdog = {extras = ["watchmedo"], version = "*"}
+watchdog = {extras = ["watchmedo"] }
+pytest = "*"
 
 [scripts]
 dev = 'python main_dev.py'
 start = 'python main.py'
+test = 'pytest'
 
 [requires]
 python_version = "3.11"

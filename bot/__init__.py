@@ -2,16 +2,20 @@ from dataclasses import dataclass
 import logging
 import discord
 import os
+from discord.ext import commands
+
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 @dataclass
-class MafiaBotModerador(discord.Client):
+class MafiaBotModerador(commands.Bot):
     token = os.environ["DISCORD_TOKEN"]
 
     def __init__(self):
-        intentosParaReconexion = discord.Intents.default()
-        intentosParaReconexion.message_content = True
-        super().__init__(intents=intentosParaReconexion)
+        permisos = discord.Intents.all()
+        super().__init__(command_prefix="!", intents=permisos)
 
     async def on_ready(self):
         logging.info(f"Listo para jugar, mi nickname es {self.user}")
