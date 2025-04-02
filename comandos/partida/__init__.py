@@ -15,7 +15,7 @@ class ErrorAlCrearPartida(Exception):
 
 def extraer_cantidad_de_jugadores(mensaje: str) -> int:
     try:
-        patron = re.compile(r"!crear ?P<cantidad>(\d+)")
+        patron = re.compile(r"!crear (?P<cantidad>(\d+))")
         coincidencias = patron.match(mensaje)
         return int(coincidencias["cantidad"])  # type: ignore
     except Exception:
