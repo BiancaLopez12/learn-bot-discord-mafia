@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from time import time
 from random import Random
 
@@ -13,6 +12,6 @@ def asignar_rol_aleatorio() -> Rol:
         return Detective()
     if dados in range(2, 4):
         return Doctor()
-    if dados in range(4, 6):
+    if dados in range(4, 9):
         return Asesino()
     return Ciudadano()

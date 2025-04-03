@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 def extraer_nick_de_la_victima(mensaje: str) -> str:
     try:
-        patron = re.compile(r"!matar (?P<victima>(\c+))")
+        patron = re.compile(r"!matar (?P<victima>([a-zA-Z]+))")
         coincidencias = patron.match(mensaje)
         return coincidencias["victima"]  # type: ignore
     except Exception:

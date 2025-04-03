@@ -46,7 +46,7 @@ class Noche(Etapa):
         self.cantidad_de_asesinos_que_votan = partida.determinar_cantidad_de_asesinos()
         while (
             not await self.asesinos_hicieron_su_eleccion()
-            or await self.hay_tiempo_para_que_los_asesinos_voten()
+            and await self.hay_tiempo_para_que_los_asesinos_voten()
         ):
             await contexto.send("Esperando a los asesinos...")
             await self.esperar_un_segundo_para_que_los_asesinos_voten()
