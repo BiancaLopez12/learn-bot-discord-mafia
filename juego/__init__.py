@@ -49,3 +49,7 @@ class Mafia:
             nick_del_asesino, nick_de_la_victima, partida=self.partida_en_curso
         )
         return self
+
+    async def informar_la_configuracion_de_la_partida(self, contexto: commands.Context):
+        await self.partida_en_curso.informar_configuracion(contexto)
+        return self

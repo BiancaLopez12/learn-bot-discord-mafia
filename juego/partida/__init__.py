@@ -100,3 +100,12 @@ class Partida:
         if victima.es_un_asesino():
             raise Exception(f"{nick_de_la_victima} es un asesino.")
         return self
+
+    async def informar_configuracion(self, contexto: commands.Context):
+        await contexto.send(
+            f"Configuración de la partida:\n"
+            f"Jugadores: {len(self.jugadores_mapeados_por_nick)}\n"
+            f"Asesinos: {self.cantidad_de_asesinos}\n"
+            f"Ciudadanos: {self.cantidad_de_ciudadanos}"
+        )
+        return self

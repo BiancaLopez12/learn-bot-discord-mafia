@@ -43,9 +43,10 @@ async def unirse(contexto: commands.Context):
 @bot.command()
 async def comenzar(contexto: commands.Context):
     try:
-        await juego.asignar_roles_a_los_jugadores()
         await contexto.send("La partida ha comenzado!")
         await contexto.send("Pronto todos recibiran sus roles. Esperen un momento.")
+        await juego.asignar_roles_a_los_jugadores()
+        await juego.informar_la_configuracion_de_la_partida(contexto)
         while not juego.hay_un_equipo_ganador():
             await juego.actuar_conforme_a_la_etapa_en_curso(contexto)
             await juego.informar_sobre_lo_ocurrido(contexto)
