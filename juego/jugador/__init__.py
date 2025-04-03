@@ -1,23 +1,23 @@
 from dataclasses import dataclass
 from discord import User, Member
-from random import Random
-from time import time
 from juego.rol import Rol
 from utils.asignar_rol import asignar_rol_aleatorio
 
 
 @dataclass
-class Jugador(Random):
+class Jugador:
     rol = Rol()
-
-    def __init__(self):
-        self.seed(time())
-        super().__init__()
 
     def seleccionar_rol(self):
         self.rol = asignar_rol_aleatorio()
 
+    def es_un_asesino(self):
+        return self.rol.soy_un_asesino()
+
     async def comunicar_rol_al_usuario(self):
+        return self
+
+    async def quien_sera_tu_victima(self):
         return self
 
 
@@ -27,6 +27,10 @@ class JugadorReal(Jugador):
 
     async def comunicar_rol_al_usuario(self):
         await self.usuario.send(f"Tu rol es: {self.rol}")
+        return self
+
+    async def quien_sera_tu_victima(self):
+        await self.rol.quien_sera_tu_victima(self.usuario)
         return self
 
 

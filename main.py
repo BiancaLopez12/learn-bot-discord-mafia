@@ -2,6 +2,7 @@ from bot import MafiaBotModerador
 from discord.ext import commands
 from juego import Mafia
 from utils.crear_partida import extraer_cantidad_de_jugadores
+from utils.matar_ciudadano import extraer_nick_de_la_victima
 
 
 juego = Mafia()
@@ -42,11 +43,29 @@ async def unirse(contexto: commands.Context):
 @bot.command()
 async def comenzar(contexto: commands.Context):
     try:
-        await juego.comenzar()
+        await juego.asignar_roles_a_los_jugadores()
         await contexto.send("La partida ha comenzado!")
         await contexto.send("Pronto todos recibiran sus roles. Esperen un momento.")
+        while not juego.hay_un_equipo_ganador():
+            await juego.actuar_conforme_a_la_etapa_en_curso(contexto)
+            await juego.informar_sobre_lo_ocurrido(contexto)
+            juego.cambiar_de_etapa()
+        await juego.informar_el_equipo_ganador(contexto)
     except Exception as e:
         await contexto.send(f"{e}")
+
+
+@bot.command()
+async def matar(contexto: commands.Context):
+    try:
+        nick_del_asesino = contexto.author.name
+        nick_de_la_victima = extraer_nick_de_la_victima(contexto.message.content)
+        await juego.un_asesino_esta_detras_de_alguien(
+            nick_del_asesino, nick_de_la_victima
+        )
+        await contexto.send("Un asesino esta detras de alguien")
+    except Exception as e:
+        await contexto.author.send(f"{e}")
 
 
 def main():
