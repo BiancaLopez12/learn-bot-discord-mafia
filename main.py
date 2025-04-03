@@ -1,7 +1,7 @@
 from bot import MafiaBotModerador
 from discord.ext import commands
 from juego import Mafia
-from comandos.partida import extraer_cantidad_de_jugadores
+from utils.crear_partida import extraer_cantidad_de_jugadores
 
 
 juego = Mafia()
@@ -24,9 +24,24 @@ async def crear(contexto: commands.Context):
     try:
         cantidad_de_jugadores = extraer_cantidad_de_jugadores(contexto.message.content)
         juego.crear_partida(cantidad_de_jugadores)
-        await contexto.send(
-            f"Partida creada para {cantidad_de_jugadores} jugadores, para unirse usa !unirse"
-        )
+        await contexto.send(f"Partida creada para {cantidad_de_jugadores} jugadores.")
+        await contexto.send("Para unirse deben usar el comando !unirse")
+    except Exception as e:
+        await contexto.send(f"{e}")
+
+
+@bot.command()
+async def unirse(contexto: commands.Context):
+    try:
+        juego.agregar_jugador(contexto.author)
+    except Exception as e:
+        await contexto.send(f"{e}")
+
+
+@bot.command()
+async def comenzar(contexto: commands.Context):
+    try:
+        await juego.comenzar()
     except Exception as e:
         await contexto.send(f"{e}")
 
