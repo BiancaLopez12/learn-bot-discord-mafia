@@ -34,6 +34,7 @@ async def crear(contexto: commands.Context):
 async def unirse(contexto: commands.Context):
     try:
         juego.agregar_jugador(contexto.author)
+        await contexto.send(f"{contexto.author.name} se unió a la partida.")
     except Exception as e:
         await contexto.send(f"{e}")
 
@@ -42,6 +43,8 @@ async def unirse(contexto: commands.Context):
 async def comenzar(contexto: commands.Context):
     try:
         await juego.comenzar()
+        await contexto.send("La partida ha comenzado!")
+        await contexto.send("Pronto todos recibiran sus roles. Esperen un momento.")
     except Exception as e:
         await contexto.send(f"{e}")
 

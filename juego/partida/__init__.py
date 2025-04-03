@@ -1,11 +1,11 @@
 from dataclasses import dataclass
-
 from juego.jugador import Jugador, JugadorNPC, JugadorReal
+import asyncio
 
 
-class LaPartidaYaEstaCompleta(Exception):
+class LaPartidaYaEstaCompletaYNoAceptaMasJugadores(Exception):
     def __str__(self):
-        return "Ya hay suficientes jugadores en la partida."
+        return "La partida ya está completa y no acepta más jugadores."
 
 
 @dataclass
@@ -15,16 +15,12 @@ class Partida:
         self.jugadores: list[Jugador] = []
 
     def agregar_jugador_si_es_posible(self, jugador):
-        if len(self.jugadores) == self.cantidad_de_jugadores:
-            raise LaPartidaYaEstaCompleta()
-        self.jugadores.append(JugadorReal(jugador))
-        if len(self.jugadores) == self.cantidad_de_jugadores:
-            raise LaPartidaYaEstaCompleta()
-        return self
+        if len(self.jugadores) in range(0, self.cantidad_de_jugadores):
+            self.jugadores.append(JugadorReal(jugador))
+            return self
+        raise LaPartidaYaEstaCompletaYNoAceptaMasJugadores()
 
     def completar_partida_si_es_necesario(self):
-        if len(self.jugadores) == self.cantidad_de_jugadores:
-            return self
         cantidad_de_jugadores_faltantes = self.cantidad_de_jugadores - len(
             self.jugadores
         )
@@ -38,7 +34,11 @@ class Partida:
             jugador.seleccionar_rol()
         return self
 
-    async def comunicar_roles_por_mp(self):
+    def proximo_aviso_a_realizar(self):
         for jugador in self.jugadores:
-            await jugador.comunicar_rol_al_usuario()
-        pass
+            yield jugador.comunicar_rol_al_usuario()
+
+    async def comunicar_roles_por_mp(self):
+        avisos = [aviso for aviso in self.proximo_aviso_a_realizar()]
+        await asyncio.gather(*avisos)
+        return self
