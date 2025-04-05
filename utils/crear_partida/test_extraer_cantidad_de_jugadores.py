@@ -1,4 +1,4 @@
-from comandos.partida import extraer_cantidad_de_jugadores
+from utils.crear_partida import extraer_cantidad_de_jugadores
 
 
 def test_extraer_cantidad_de_jugadores():

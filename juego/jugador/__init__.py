@@ -8,8 +8,8 @@ from utils.asignar_rol import asignar_rol_aleatorio
 class Jugador:
     rol = Rol()
 
-    def seleccionar_rol(self):
-        self.rol = asignar_rol_aleatorio()
+    def seleccionar_rol(self, cantidad_de_asesinos: int):
+        self.rol = asignar_rol_aleatorio(cantidad_de_asesinos)
 
     def es_un_asesino(self):
         return self.rol.soy_un_asesino()

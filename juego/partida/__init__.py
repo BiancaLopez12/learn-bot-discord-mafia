@@ -35,7 +35,7 @@ class Partida:
 
     def asignar_roles(self):
         for jugador in self.jugadores_mapeados_por_nick.values():
-            jugador.seleccionar_rol()
+            jugador.seleccionar_rol(self.cantidad_de_asesinos)
             if jugador.es_un_asesino():
                 self.cantidad_de_asesinos += 1
             if not jugador.es_un_asesino():
