@@ -13,7 +13,7 @@ pytest = "*"
 [scripts]
 dev = 'python main_dev.py'
 start = 'python main.py'
-test = 'pytest'
+tests = 'pytest'
 
 [requires]
 python_version = "3.11"
