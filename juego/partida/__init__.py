@@ -52,9 +52,8 @@ class Partida:
 
     async def consultar_a_los_mafiosos_a_quien_van_a_matar(self):
         avisos = [
-            jugador.quien_sera_tu_victima()
+            jugador.votar_por_una_victima()
             for jugador in self.jugadores_mapeados_por_nick.values()
-            if jugador.es_un_mafioso()
         ]
         await asyncio.gather(*avisos)
         return self

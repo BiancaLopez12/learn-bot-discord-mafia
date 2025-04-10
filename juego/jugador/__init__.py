@@ -12,12 +12,12 @@ class Jugador:
         self.rol = asignar_rol_aleatorio(cantidad_de_mafiosos)
 
     def es_un_mafioso(self):
-        return self.rol.soy_un_mafioso()
+        return self.rol.es_un_mafioso()
 
     async def comunicar_rol_al_usuario(self):
         return self
 
-    async def quien_sera_tu_victima(self):
+    async def votar_por_una_victima(self):
         return self
 
 
@@ -29,8 +29,8 @@ class JugadorReal(Jugador):
         await self.usuario.send(f"Tu rol es: {self.rol}")
         return self
 
-    async def quien_sera_tu_victima(self):
-        await self.rol.quien_sera_tu_victima(self.usuario)
+    async def votar_por_una_victima(self):
+        await self.rol.votar_por_una_victima(self.usuario)
         return self
 
 

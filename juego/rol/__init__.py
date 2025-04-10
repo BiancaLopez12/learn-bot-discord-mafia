@@ -9,10 +9,10 @@ class Rol:
     def __str__(self) -> str:
         return f"{self.nombre}"
 
-    def soy_un_mafioso(self) -> bool:
+    def es_un_mafioso(self) -> bool:
         return False
 
-    async def quien_sera_tu_victima(self, jugador: Member | User):
+    async def votar_por_una_victima(self, jugador: Member | User):
         return self
 
 
@@ -39,10 +39,10 @@ class Mafioso(Rol):
     def __init__(self):
         super().__init__(nombre="Mafioso")
 
-    def soy_un_mafioso(self) -> bool:
+    def es_un_mafioso(self) -> bool:
         return True
 
-    async def quien_sera_tu_victima(self, jugador: Member | User):
+    async def votar_por_una_victima(self, jugador: Member | User):
         await jugador.send(
             "¿A quién vas a matar? Responde con el nombre del jugador o su ID."
         )
