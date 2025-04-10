@@ -16,7 +16,7 @@ async def estado(contexto: commands.Context):
 
 @bot.command()
 async def ayuda(contexto: commands.Context):
-    comandos = ["estado", "ayuda", "crear", "unirse", "comenzar"]
+    comandos = ["estado", "ayuda", "jugar", "unirse", "comenzar"]
     await contexto.send(f"Comandos disponibles: {', '.join(comandos)}")
 
 
@@ -41,16 +41,13 @@ async def unirse(contexto: commands.Context):
 
 
 @bot.command()
-async def comenzar(contexto: commands.Context):
+async def jugar(contexto: commands.Context):
     try:
         await contexto.send("La partida ha comenzado!")
         await contexto.send("Pronto todos recibiran sus roles. Esperen un momento.")
         await juego.asignar_roles_a_los_jugadores()
         await juego.informar_la_configuracion_de_la_partida(contexto)
-        while not juego.hay_un_equipo_ganador():
-            await juego.actuar_conforme_a_la_etapa_en_curso(contexto)
-            await juego.informar_sobre_lo_ocurrido(contexto)
-            juego.cambiar_de_etapa()
+        await juego.jugar_mientras_no_exista_un_equipo_ganador(contexto)
         await juego.informar_el_equipo_ganador(contexto)
     except Exception as e:
         await contexto.send(f"{e}")
@@ -59,12 +56,11 @@ async def comenzar(contexto: commands.Context):
 @bot.command()
 async def matar(contexto: commands.Context):
     try:
-        nick_del_asesino = contexto.author.name
-        nick_de_la_victima = extraer_nick_de_la_victima(contexto.message.content)
-        await juego.un_asesino_esta_detras_de_alguien(
-            nick_del_asesino, nick_de_la_victima
+        await juego.un_mafioso_esta_detras_de_alguien(
+            nick_del_mafioso=contexto.author.name,
+            nick_de_la_victima=extraer_nick_de_la_victima(contexto.message.content),
         )
-        await contexto.send("Un asesino esta detras de alguien")
+        await contexto.send("Un mafioso esta detras de alguien")
     except Exception as e:
         await contexto.author.send(f"{e}")
 

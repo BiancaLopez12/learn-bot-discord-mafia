@@ -9,7 +9,7 @@ class Rol:
     def __str__(self) -> str:
         return f"{self.nombre}"
 
-    def soy_un_asesino(self) -> bool:
+    def soy_un_mafioso(self) -> bool:
         return False
 
     async def quien_sera_tu_victima(self, jugador: Member | User):
@@ -35,11 +35,11 @@ class Doctor(Rol):
 
 
 @dataclass
-class Asesino(Rol):
+class Mafioso(Rol):
     def __init__(self):
-        super().__init__(nombre="Asesino")
+        super().__init__(nombre="Mafioso")
 
-    def soy_un_asesino(self) -> bool:
+    def soy_un_mafioso(self) -> bool:
         return True
 
     async def quien_sera_tu_victima(self, jugador: Member | User):

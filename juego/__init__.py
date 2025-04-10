@@ -42,14 +42,23 @@ class Mafia:
         await self.partida_en_curso.informar_el_equipo_ganador(contexto)
         return self
 
-    async def un_asesino_esta_detras_de_alguien(
-        self, nick_del_asesino: str, nick_de_la_victima: str
+    async def un_mafioso_esta_detras_de_alguien(
+        self, nick_del_mafioso: str, nick_de_la_victima: str
     ):
-        await self.etapa.un_asesino_esta_detras_de_alguien(
-            nick_del_asesino, nick_de_la_victima, partida=self.partida_en_curso
+        await self.etapa.un_mafioso_esta_detras_de_alguien(
+            nick_del_mafioso, nick_de_la_victima, partida=self.partida_en_curso
         )
         return self
 
     async def informar_la_configuracion_de_la_partida(self, contexto: commands.Context):
         await self.partida_en_curso.informar_configuracion(contexto)
+        return self
+
+    async def jugar_mientras_no_exista_un_equipo_ganador(
+        self, contexto: commands.Context
+    ):
+        while not self.hay_un_equipo_ganador():
+            await self.actuar_conforme_a_la_etapa_en_curso(contexto)
+            await self.informar_sobre_lo_ocurrido(contexto)
+            self.cambiar_de_etapa()
         return self

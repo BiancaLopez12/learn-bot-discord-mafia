@@ -16,10 +16,10 @@ class Partida:
         self.cantidad_de_jugadores_requerida = cantidad_de_jugadores
         self.jugadores_mapeados_por_nick: dict[str, Jugador] = {}
         self.cantidad_de_ciudadanos = 0
-        self.cantidad_de_asesinos = 0
+        self.cantidad_de_mafiosos = 0
 
-    def determinar_cantidad_de_asesinos(self):
-        return self.cantidad_de_asesinos
+    def determinar_cantidad_de_mafiosos(self):
+        return self.cantidad_de_mafiosos
 
     def agregar_jugador_si_es_posible(self, jugador: User | Member):
         self.jugadores_mapeados_por_nick[jugador.name] = JugadorReal(usuario=jugador)
@@ -35,10 +35,10 @@ class Partida:
 
     def asignar_roles(self):
         for jugador in self.jugadores_mapeados_por_nick.values():
-            jugador.seleccionar_rol(self.cantidad_de_asesinos)
-            if jugador.es_un_asesino():
-                self.cantidad_de_asesinos += 1
-            if not jugador.es_un_asesino():
+            jugador.seleccionar_rol(self.cantidad_de_mafiosos)
+            if jugador.es_un_mafioso():
+                self.cantidad_de_mafiosos += 1
+            if not jugador.es_un_mafioso():
                 self.cantidad_de_ciudadanos += 1
         return self
 
@@ -50,22 +50,22 @@ class Partida:
         await asyncio.gather(*avisos)
         return self
 
-    async def consultar_a_los_asesinos_a_quien_van_a_matar(self):
+    async def consultar_a_los_mafiosos_a_quien_van_a_matar(self):
         avisos = [
             jugador.quien_sera_tu_victima()
             for jugador in self.jugadores_mapeados_por_nick.values()
-            if jugador.es_un_asesino()
+            if jugador.es_un_mafioso()
         ]
         await asyncio.gather(*avisos)
         return self
 
     def hay_un_equipo_ganador(self):
         return (
-            self.cantidad_de_asesinos >= self.cantidad_de_ciudadanos
-            or self.cantidad_de_asesinos == 0
+            self.cantidad_de_mafiosos >= self.cantidad_de_ciudadanos
+            or self.cantidad_de_mafiosos == 0
         )
 
-    def quitar_al_jugador_elegido_por_los_asesinos(self, nick: str):
+    def quitar_al_jugador_elegido_por_los_mafiosos(self, nick: str):
         self.jugadores_mapeados_por_nick.pop(nick)
         self.cantidad_de_ciudadanos -= 1
 
@@ -75,37 +75,37 @@ class Partida:
         if not self.hay_un_equipo_ganador():
             await contexto.send("No hay un equipo ganador.")
 
-        ganaron_los_asesinos = self.cantidad_de_asesinos >= self.cantidad_de_ciudadanos
-        if ganaron_los_asesinos:
-            await contexto.send("Ganaron los asesinos!")
+        ganaron_los_mafiosos = self.cantidad_de_mafiosos >= self.cantidad_de_ciudadanos
+        if ganaron_los_mafiosos:
+            await contexto.send("Ganaron los mafiosos!")
 
-        ganaron_los_ciudadanos = self.cantidad_de_asesinos == 0
+        ganaron_los_ciudadanos = self.cantidad_de_mafiosos == 0
         if ganaron_los_ciudadanos:
             await contexto.send("Ganaron los ciudadanos!")
 
         return self
 
-    def verificar_si_el_asesino_esta_en_juego(self, nick_del_asesino: str):
-        asesino = self.jugadores_mapeados_por_nick.get(nick_del_asesino)
-        if not asesino:
-            raise Exception(f"{nick_del_asesino} no está en la partida.")
-        if not asesino.es_un_asesino():
-            raise Exception(f"{nick_del_asesino} no es un asesino.")
+    def verificar_si_el_mafioso_esta_en_juego(self, nick_del_mafioso: str):
+        mafioso = self.jugadores_mapeados_por_nick.get(nick_del_mafioso)
+        if not mafioso:
+            raise Exception(f"{nick_del_mafioso} no está en la partida.")
+        if not mafioso.es_un_mafioso():
+            raise Exception(f"{nick_del_mafioso} no es un mafioso.")
         return self
 
     def verificar_si_la_victima_esta_en_juego(self, nick_de_la_victima: str):
         victima = self.jugadores_mapeados_por_nick.get(nick_de_la_victima)
         if not victima:
             raise Exception(f"{nick_de_la_victima} no está en la partida.")
-        if victima.es_un_asesino():
-            raise Exception(f"{nick_de_la_victima} es un asesino.")
+        if victima.es_un_mafioso():
+            raise Exception(f"{nick_de_la_victima} es un mafioso.")
         return self
 
     async def informar_configuracion(self, contexto: commands.Context):
         await contexto.send(
             f"Configuración de la partida:\n"
             f"Jugadores: {len(self.jugadores_mapeados_por_nick)}\n"
-            f"Asesinos: {self.cantidad_de_asesinos}\n"
+            f"Mafiosos: {self.cantidad_de_mafiosos}\n"
             f"Ciudadanos: {self.cantidad_de_ciudadanos}"
         )
         return self
