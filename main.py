@@ -66,7 +66,7 @@ async def matar(contexto: commands.Context):
 
 
 def main():
-    bot.iniciar()
+    bot.ejecutar()
 
 
 if __name__ == "__main__":

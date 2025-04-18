@@ -20,5 +20,5 @@ class MafiaBotModerador(commands.Bot):
     async def on_ready(self):
         logging.info(f"Listo para jugar, mi nickname es {self.user}")
 
-    def iniciar(self):
+    def ejecutar(self):
         self.run(self.token)
