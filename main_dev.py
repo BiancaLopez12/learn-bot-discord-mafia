@@ -68,7 +68,7 @@ class EntornoDeDesarrollo(FileSystemEventHandler):
         self.observador.stop()
         self.observador.join()
 
-    def iniciar(self):
+    def observar_cambios_en_el_proyecto(self):
         try:
             self.comenzar_a_observar_cambios()
         finally:
@@ -78,7 +78,7 @@ class EntornoDeDesarrollo(FileSystemEventHandler):
 
 def main():
     entorno = EntornoDeDesarrollo()
-    entorno.iniciar()
+    entorno.observar_cambios_en_el_proyecto()
 
 
 if __name__ == "__main__":
