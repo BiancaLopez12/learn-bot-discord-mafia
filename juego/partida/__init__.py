@@ -20,6 +20,18 @@ class Partida:
 
     def determinar_cantidad_de_mafiosos(self):
         return self.cantidad_de_mafiosos
+    
+    def determinar_cantidad_de_jugadores(self):
+        return self.cantidad_de_ciudadanos + self.cantidad_de_mafiosos
+    
+
+    def expulsar_al_jugador(self, nick_del_jugador_expulsado:str):
+        jugador = self.jugadores_mapeados_por_nick.pop(nick_del_jugador_expulsado)  
+        if jugador.es_un_mafioso():
+            self.cantidad_de_mafiosos -= 1
+        else:
+            self.cantidad_de_ciudadanos -= 1
+        return jugador
 
     def agregar_jugador_si_es_posible(self, jugador: User | Member):
         self.jugadores_mapeados_por_nick[jugador.name] = JugadorReal(usuario=jugador)
@@ -41,6 +53,8 @@ class Partida:
             if not jugador.es_un_mafioso():
                 self.cantidad_de_ciudadanos += 1
         return self
+    
+
 
     async def comunicar_roles_por_mp(self):
         avisos = [

@@ -24,12 +24,75 @@ class Etapa:
 
 @dataclass
 class Dia(Etapa):
+    def __init__(self):
+        self.cantidad_de_segundos_a_esperar = 15
+        self.cantidad_de_jugadores_que_votan = 0
+        self.votacion_en_proceso = asyncio.Lock()
+        self.urna_con_posibles_expulsados: dict[str, int] = {}
+
     def proxima_etapa(self):
         return Noche()
 
     async def actuar(self, partida: Partida, contexto: commands.Context):
+        self.cantidad_de_jugadores_que_votan = partida.determinar_cantidad_de_jugadores()
+        await contexto.send("Es de día. Todos los jugadores deben votar a quién expulsar.")
+        while (
+            not await self.ya_votaron_todos_los_jugadores()
+            and await self.hay_tiempo_para_votar()
+        ):
+            await self.esperar_un_segundo_para_votar()
+        jugador = self.expulsar_al_jugador_elegido_si_es_que_hubo_votos(partida)
+        await contexto.send(f"El jugador eliminado es: {"Mafioso" if jugador.es_un_mafioso() else "Cuidadano"}")
         return self
 
+    def expulsar_al_jugador_elegido_si_es_que_hubo_votos(self, partida: Partida):
+        nick_expulsado = await self.nick_del_expulsado()
+        return partida.expulsar_al_jugador(nick_expulsado)
+
+    async def hay_votos_en_la_urna(self):
+        async with self.votacion_en_proceso:
+            return len(self.urna_con_posibles_expulsados) > 0
+
+    async def hay_tiempo_para_votar(self):
+        async with self.votacion_en_proceso:
+            return self.cantidad_de_segundos_a_esperar > 0
+
+    async def ya_votaron_todos_los_jugadores(self):
+        async with self.votacion_en_proceso:
+            return self.cantidad_de_jugadores_que_votan == 0
+
+    async def nick_del_expulsado(self):
+        async with self.votacion_en_proceso:
+            votaciones = self.urna_con_posibles_expulsados.items()
+            expulsado = max(votaciones, key=lambda x: x[1])
+            return expulsado[0]
+
+    async def esperar_un_segundo_para_votar(self):
+        await asyncio.sleep(1)
+        self.cantidad_de_segundos_a_esperar -= 1
+
+    async def un_jugador_vota_por_alguien(
+        self, nick_votante: str, nick_votado: str, partida: Partida
+    ):
+        async with self.votacion_en_proceso:
+            partida.verificar_si_el_jugador_esta_en_juego(nick_votante)
+            partida.verificar_si_el_jugador_esta_en_juego(nick_votado)
+            if nick_votado not in self.urna_con_posibles_expulsados:
+                self.urna_con_posibles_expulsados[nick_votado] = 1
+            else:
+                self.urna_con_posibles_expulsados[nick_votado] += 1
+
+            self.cantidad_de_jugadores_que_votan -= 1
+        return self
+
+    async def informar_sobre_lo_ocurrido(self, contexto: commands.Context):
+        if await self.hay_votos_en_la_urna():
+            nick_expulsado = await self.nick_del_expulsado()
+            await contexto.send(f"El jugador expulsado es {nick_expulsado}")
+            return self
+
+        await contexto.send("Nadie fue expulsado durante el día")
+        return self
 
 @dataclass
 class Noche(Etapa):

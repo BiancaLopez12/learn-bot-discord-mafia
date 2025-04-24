@@ -64,6 +64,27 @@ async def matar(contexto: commands.Context):
     except Exception as e:
         await contexto.author.send(f"{e}")
 
+@bot.command()
+async def expulsar(ctx: commands.Context):
+    try:
+        # Extraemos el nick de la víctima del mensaje
+        nick_votado = extraer_nick_de_la_victima(ctx.message.content)
+        
+        # Llamamos al método para registrar el voto del jugador que ejecuta el comando
+        await juego.un_jugador_vota_por_alguien(
+            nick_votante=ctx.author.name,
+            nick_votado=nick_votado,
+            partida=obtener_partida_de_contexto(ctx)  # Función que recupera la partida según el contexto
+        )
+        
+        # Informamos al canal que el voto fue registrado
+        await ctx.send(f"{ctx.author.name} ha votado por {nick_votado} para ser expulsado.")
+    
+    except Exception as e:
+        # Si algo sale mal, informamos al autor del comando
+        await ctx.author.send(f"Error al registrar el voto: {str(e)}")
+
+
 
 def main():
     bot.ejecutar()
